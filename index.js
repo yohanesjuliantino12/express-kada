@@ -36,5 +36,10 @@ app.get('/kada', (req, res, next) => {
     next();
 })
 
+app.get('/unauthorized', (req, res) => {
+    res.status(401).send("Unauthorized")
+})
+
+
 app.listen(3000);
 
