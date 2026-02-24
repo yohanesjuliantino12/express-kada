@@ -11,22 +11,29 @@ app.use((req,res,next) =>{
     next();
 })
 
-app.get('/', (req, res, next) => {
-    res.send('Hello, Yohanes!!')
-})
-
-app.use((err, req, res, next) => {
-    res.send('Error Handling');
-});
-
 app.use((req, res, next) => {
     console.log(`Request lewatt jalan ini ${req.path}`);
     next();
 })
 
-app.get('/say:greeting', (req,res) => {
+app.get('/say/:greeting', (req,res) => {
     const { greeting } = req.params;
     res.send(greeting);
+})
+
+app.get('/', (req, res, next) => {
+    res.send('Hello, Yohanes!!')
+    next();
+})
+
+app.use((err, req, res, next) => {
+    res.send('Error Handling');
+    next();
+});
+
+app.get('/kada', (req, res, next) => {
+    res.send('KADA BATCH 3')
+    next();
 })
 
 app.listen(3000);
