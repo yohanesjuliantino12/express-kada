@@ -24,7 +24,7 @@ app.use((req, res, next) => {
     next();
 })
 
-app.get('/say:greeting', (req,res) => {
+app.get('/say/:greeting', (req,res) => {
     const { greeting } = req.params;
     res.send(greeting);
 })
