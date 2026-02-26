@@ -2,6 +2,7 @@ import express from 'express'
 import noteRouter from './routes/notes.js'
 import mongoose from 'mongoose';
 import postsRouter from './routes/posts.js';
+import cors from 'cors';
 
 const app = express()
 // const api = "mongodb+srv://yohanesjuliantino12_db_user:Larangan123@pyrothics.kkvc1w9.mongodb.net/"
@@ -16,7 +17,9 @@ mongoose.connect(api)
   });
 
 app.use(express.json())
-
+app.use(cors({
+  origin:"*",
+}));
 app.use('/notes', noteRouter);
 app.use('/posts',postsRouter);
 
