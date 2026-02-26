@@ -6,8 +6,8 @@ import cors from 'cors';
 
 const app = express()
 // const api = "mongodb+srv://yohanesjuliantino12_db_user:Larangan123@pyrothics.kkvc1w9.mongodb.net/"
-const api ="mongodb://yohanesjuliantino12_db_user:Larangan123@ac-fp1tfn6-shard-00-01.kkvc1w9.mongodb.net:27017,ac-fp1tfn6-shard-00-00.kkvc1w9.mongodb.net:27017,ac-fp1tfn6-shard-00-02.kkvc1w9.mongodb.net:27017/myProjectDB?ssl=true&replicaSet=atlas-1018lb-shard-0&authSource=admin";
-// const api = "mongodb+srv://yohanesjuliantino12_db_user:Larangan123@pyrothics.kkvc1w9.mongodb.net/?appName=PyroThics";
+// const api ="mongodb://yohanesjuliantino12_db_user:Larangan123@ac-fp1tfn6-shard-00-01.kkvc1w9.mongodb.net:27017,ac-fp1tfn6-shard-00-00.kkvc1w9.mongodb.net:27017,ac-fp1tfn6-shard-00-02.kkvc1w9.mongodb.net:27017/myProjectDB?ssl=true&replicaSet=atlas-1018lb-shard-0&authSource=admin";
+const api = "mongodb+srv://yohanesjuliantino12_db_user:Larangan123@pyrothics.kkvc1w9.mongodb.net/?appName=PyroThics";
 mongoose.connect(api)
   .then(() => {
     console.log('Berhasil terhubung ke MongoDB! 🚀');
