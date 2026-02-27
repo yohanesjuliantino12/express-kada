@@ -31,8 +31,8 @@ router.get('/:id', async (req, res, next) => {
 // 3. CREATE POST (Create)
 router.post('/', async (req, res, next) => {
   try {
-    const { title, content } = req.body;
-    const newPost = await Post.create({ title, content });
+    const { author, title, content } = req.body;
+    const newPost = await Post.create({ author, title, content });
     
     res.status(201).json(newPost);
   } catch (e) {
@@ -44,10 +44,10 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, content } = req.body;
+    const { author, title, content } = req.body;
     
     // Mengasumsikan model Post memiliki metode findByIdAndUpdate atau update
-    const updatedPost = await Post.findByIdAndUpdate(id, { title, content }, { new: true });
+    const updatedPost = await Post.findByIdAndUpdate(id, { author, title, content }, { new: true });
     
     res.json(updatedPost);
   } catch (e) {
