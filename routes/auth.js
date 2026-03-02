@@ -1,18 +1,20 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import { User } from '../models/schemas/index.js';
-
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// REGISTER
+// ⚠️ sementara hardcode dulu
+const JWT_SECRET = "supersecretkey";
+
+/* ================= REGISTER ================= */
 router.post("/register", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ Cek email sudah ada atau belum
+    // Cek user sudah ada
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
       return res.status(400).json({
         result: "fail",
@@ -20,22 +22,26 @@ router.post("/register", async (req, res, next) => {
       });
     }
 
-    // 2️⃣ Hash password
-    const hashed = await bcrypt.hash(password, 10);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3️⃣ Simpan user
+    // Simpan ke database
     await User.create({
       email,
-      password: hashed,
+      password: hashedPassword,
     });
 
-    res.json({ result: "success" });
+    res.json({
+      result: "success",
+      message: "Register berhasil",
+    });
+
   } catch (err) {
     next(err);
   }
 });
 
-// LOGIN
+/* ================= LOGIN ================= */
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -48,16 +54,28 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    const match = await bcrypt.compare(password, user.password);
-
-    if (!match) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(400).json({
         result: "fail",
         message: "Password salah",
       });
     }
 
-    res.json({ result: "success" });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+      },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      result: "success",
+      token,
+    });
+
   } catch (err) {
     next(err);
   }

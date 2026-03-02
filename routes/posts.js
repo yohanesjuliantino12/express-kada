@@ -1,11 +1,11 @@
 import { Router } from 'express';
 // Mengimpor Post dari file models
 import { Post } from '../models/schemas/index.js';
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = Router();
-
 // 1. GET ALL POSTS (Read)
-router.get('/', async (req, res, next) => {
+router.get('/', verifyToken, async (req, res, next) => {
   try {
     const listPost = await Post.find({}); // Mengambil semua data
     res.json(listPost);
@@ -15,7 +15,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // 2. GET POST BY ID (Read)
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', verifyToken, async (req, res, next) => {
   try {
     const { id } = req.params;
     const postById = await Post.findById(id);
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // 3. CREATE POST (Create)
-router.post('/', async (req, res, next) => {
+router.post('/', verifyToken, async (req, res, next) => {
   try {
     const { author, title, content } = req.body;
     const newPost = await Post.create({ author, title, content });
@@ -41,7 +41,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // 4. UPDATE POST (Update)
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', verifyToken, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { author, title, content } = req.body;
@@ -56,7 +56,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // 5. DELETE POST (Delete)
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyToken, async (req, res, next) => {
   try {
     const { id } = req.params;
     await Post.findByIdAndDelete(id);
