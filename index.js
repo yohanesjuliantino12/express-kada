@@ -3,7 +3,6 @@ import noteRouter from './routes/notes.js'
 import mongoose from 'mongoose';
 import postsRouter from './routes/posts.js';
 import authRouter from "./routes/auth.js";
-
 import cors from 'cors';
 
 const app = express()
@@ -79,8 +78,6 @@ app.use((req, res, next) => {
         error:`Page not found ${req.path}`
     });
 });
-
-
 
 app.listen(3000, () =>{
     console.log('Server jalan di localhost:3000')
