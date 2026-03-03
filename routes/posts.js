@@ -5,7 +5,7 @@ import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = Router();
 // 1. GET ALL POSTS (Read)
-router.use(verifyToken)
+router.use(verifyToken);
 
 router.get('/', async (req, res, next) => {
   try {
