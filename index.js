@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from 'express'
 import noteRouter from './routes/notes.js'
 import mongoose from 'mongoose';
@@ -23,6 +25,7 @@ app.use(cors({
 app.use('/notes', noteRouter);
 app.use('/posts',postsRouter);
 app.use('/auth', authRouter);
+
 
 // app.use((req,res,next) =>{
 //     if(false){
@@ -77,6 +80,9 @@ app.use((req, res, next) => {
         error:`Page not found ${req.path}`
     });
 });
+
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
 app.listen(3000, () =>{
     console.log('Server jalan di localhost:3000')

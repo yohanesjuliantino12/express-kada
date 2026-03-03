@@ -1,19 +1,17 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import { User } from '../models/schemas/index.js';
 import jwt from "jsonwebtoken";
+import { User } from "../models/schemas/index.js";
+import { createTransporter } from "../utils/email.js";
 
 const router = express.Router();
-
-// ⚠️ sementara hardcode dulu
-const JWT_SECRET = "supersecretkey";
 
 /* ================= REGISTER ================= */
 router.post("/register", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Cek user sudah ada
+    // 1️⃣ Cek email sudah ada
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -22,22 +20,64 @@ router.post("/register", async (req, res, next) => {
       });
     }
 
-    // Hash password
+    // 2️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Simpan ke database
-    await User.create({
+    // 3️⃣ Simpan user
+    const user = await User.create({
       email,
       password: hashedPassword,
     });
 
+    // 4️⃣ Buat verification token
+    const verificationToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    const verificationLink = `http://yohaneshtgl.my.id/auth/verify/${verificationToken}`;
+
+    // 5️⃣ Buat transporter SETELAH env siap
+    const transporter = createTransporter();
+
+    // 6️⃣ Kirim email
+    await transporter.sendMail({
+      from: `"My App" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Verifikasi Akun",
+      html: `
+        <h3>Verifikasi Email</h3>
+        <p>Klik link berikut untuk verifikasi akun:</p>
+        <a href="${verificationLink}">${verificationLink}</a>
+      `,
+    });
+
     res.json({
       result: "success",
-      message: "Register berhasil",
+      message: "Register berhasil. Cek email untuk verifikasi.",
     });
 
   } catch (err) {
     next(err);
+  }
+});
+
+/* ================= VERIFY EMAIL ================= */
+router.get("/verify/:token", async (req, res) => {
+  try {
+    const decoded = jwt.verify(
+      req.params.token,
+      process.env.JWT_SECRET
+    );
+
+    await User.findByIdAndUpdate(decoded.id, {
+      isVerified: true,
+    });
+
+    res.send("Email berhasil diverifikasi");
+  } catch (err) {
+    res.status(400).send("Link tidak valid atau expired");
   }
 });
 
@@ -47,6 +87,7 @@ router.post("/login", async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({
         result: "fail",
@@ -54,7 +95,15 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
+    if (!user.isVerified) {
+      return res.status(403).json({
+        result: "fail",
+        message: "Email belum diverifikasi",
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(400).json({
         result: "fail",
@@ -67,7 +116,7 @@ router.post("/login", async (req, res, next) => {
         id: user._id,
         email: user.email,
       },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
