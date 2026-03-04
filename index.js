@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import postsRouter from './routes/posts.js';
 import authRouter from "./routes/auth.js";
 import cors from 'cors';
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 const app = express()
 const api = process.env.API_URL;
@@ -24,6 +25,7 @@ app.use(cors({
 app.use('/notes', noteRouter);
 app.use('/posts',postsRouter);
 app.use('/auth', authRouter);
+app.use('/payment', paymentRoutes)
 
 
 // app.use((req,res,next) =>{
@@ -82,7 +84,7 @@ app.use((req, res, next) => {
 
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
-
+console.log("SERVER_KEY:", process.env.MIDTRANS_SERVER_KEY);
 app.listen(3000, () =>{
     console.log('Server jalan di localhost:3000')
 });
