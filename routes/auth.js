@@ -33,7 +33,7 @@ router.post("/register", async (req, res, next) => {
     const verificationToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1h" }
     );
 
     const verificationLink = `https://h5368w.csb.app/auth/verify/${verificationToken}`;
