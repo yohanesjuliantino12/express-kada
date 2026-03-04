@@ -36,7 +36,7 @@ router.post("/register", async (req, res, next) => {
       { expiresIn: "1d" }
     );
 
-    const verificationLink = `http://yohaneshtgl.my.id/auth/verify/${verificationToken}`;
+    const verificationLink = `https://h5368w.csb.app/auth/verify/${verificationToken}`;
 
     // 5️⃣ Buat transporter SETELAH env siap
     const transporter = createTransporter();
